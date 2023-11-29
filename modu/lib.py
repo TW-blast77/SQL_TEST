@@ -51,8 +51,7 @@ def signIn(account: List[str], password: List[str]) -> None:
     input_Password = input("請輸入密碼 : ")
     
     if (
-        (input_Account == account[0] or input_Account == account[1]) and
-        (input_Password == password[0] or input_Password == password[1])
+        input_Account in account and input_Password in password
     ):
         menu()
     else:
