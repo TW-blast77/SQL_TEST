@@ -9,4 +9,5 @@ def main():
     while(True):
         choice = input("請輸入您的選擇 [0-7]: ")
         lib.switch(choice)
+        lib.menu()
 main()

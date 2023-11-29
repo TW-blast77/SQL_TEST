@@ -162,6 +162,13 @@ def add_data_to_database(name: str, sex: str, phone: str) -> None:
     cursorObj.connection.commit()
     cursorObj.close()
 
+def result_all():
+    cursorObj = create_SQL_database()
+    cursor = cursorObj.execute("SELECT * from members")
+    result_all = cursor.fetchall()
+    cursorObj.close()
+    return result_all
+
 def show_log() -> List[Tuple[str, str, str]]:
     """
     顯示資料庫中的所有記錄。
@@ -180,7 +187,7 @@ def show_log() -> List[Tuple[str, str, str]]:
     else:
         print("""
 姓名       性別  手機
------------------------------1
+-----------------------------
         """)
         for item in result_all:
             print(f'{add_spaces_name(item[0])}{add_spaces_sex(item[1])}{(item[2])}')
@@ -195,7 +202,7 @@ def modify_record() -> None:
     """
     cursorObj = create_SQL_database()  
     input_set_logName = input("請輸入想修改記錄的姓名: ")
-    result = show_log()
+    result = result_all()
     found_record = None
 
     for item in result:
@@ -216,7 +223,7 @@ def modify_record() -> None:
         print(f'姓名:{input_set_logName}，性別:{input_set_logSex}，電話:{input_set_logPhone}')
         cursorObj.connection.commit()
         cursorObj.close()
-        menu()
+        
     else:
         print("=>未找到指定姓名的記錄")
 
@@ -229,8 +236,8 @@ def found_recode() -> None:
     返回:
     None
     """
-    cursorObj = create_SQL_database()  
-    result = show_log()
+    create_SQL_database()  
+    result = result_all()
     input_set_logPhone = input("請輸入想修改記錄的手機: ")
     found_record = None
     for item in result:
@@ -242,7 +249,7 @@ def found_recode() -> None:
         # 顯示更改前的資料
         print("""
 姓名       性別  手機
------------------------------2
+-----------------------------
     """)
         print(f'{add_spaces_name(item[0])}{add_spaces_sex(item[1])}{(item[2])}')
     else:
@@ -256,7 +263,7 @@ def delete_database() -> None:
     None
     """
     cursorObj = create_SQL_database()  
-    result = show_log()
+    result = result_all()
 
     if result:
         deleted_records = len(result)  # 記錄要刪除的記錄數
@@ -285,7 +292,7 @@ def switch(choice: str) -> None:
     elif choice == "1": #create_SQL_database
         cursorObj = create_SQL_database()
         print("=>資料庫已建立")
-        menu()
+        
         return cursorObj
     
     elif choice == "2":
@@ -303,11 +310,11 @@ def switch(choice: str) -> None:
         # 將數據提交到數據庫
         cursorObj.connection.commit()
         cursorObj.close()
-        menu()
+        
 
     elif choice == "3":
         show_log()
-        menu()
+        
 
     elif choice == "4":
 
@@ -316,18 +323,19 @@ def switch(choice: str) -> None:
         phone = input("請輸入手機: ")
         add_data_to_database(name,sex,phone)
         print("=>異動 1 筆紀錄")
-        menu()
+        
 
     elif choice == "5":
         modify_record()
 
     elif choice == "6":
         found_recode()
-        menu()
+        
 
     elif choice == "7":
         delete_database()
-        menu()
+        
 
     else:
         print("=>無效的選擇")
+        
