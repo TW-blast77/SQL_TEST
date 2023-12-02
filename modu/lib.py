@@ -50,14 +50,15 @@ def signIn(account: List[str], password: List[str]) -> None:
     input_Account = input("請輸入帳號 : ")
     input_Password = input("請輸入密碼 : ")
     
-    if (
-        input_Account in account and input_Password in password
-    ):
-        menu()
-    else:
-        print("=>帳密錯誤，程式結束")
-        print()
-        os._exit(0)
+    if input_Account in account:
+        index = account.index(input_Account)
+        if password[index] == input_Password:
+            menu()
+            return
+    
+    print("=>帳密錯誤，程式結束")
+    print()
+    os._exit(0)
 
 def menu() -> None:
     """
