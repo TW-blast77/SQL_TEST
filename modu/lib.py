@@ -55,7 +55,11 @@ def signIn(account: List[str], password: List[str]) -> None:
         if password[index] == input_Password:
             menu()
             return
+<<<<<<< HEAD
    
+=======
+    
+>>>>>>> da64da257e486ffb762b1a73900801dd57768af5
     print("=>帳密錯誤，程式結束")
     print()
     os._exit(0)
