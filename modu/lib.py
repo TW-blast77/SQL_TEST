@@ -50,14 +50,15 @@ def signIn(account: List[str], password: List[str]) -> None:
     input_Account = input("請輸入帳號 : ")
     input_Password = input("請輸入密碼 : ")
     
-    if (
-        input_Account in account and input_Password in password
-    ):
-        menu()
-    else:
-        print("=>帳密錯誤，程式結束")
-        print()
-        os._exit(0)
+    if input_Account in account:
+        index = account.index(input_Account)
+        if password[index] == input_Password:
+            menu()
+            return
+   
+    print("=>帳密錯誤，程式結束")
+    print()
+    os._exit(0)
 
 def menu() -> None:
     """
@@ -216,18 +217,22 @@ def modify_record() -> None:
         # 顯示更改前的資料
         print("\n原資料: ")
         print(f'姓名:{found_record[0]}，性別:{found_record[1]}，電話:{found_record[2]}')
-        print("=>異動 1 筆記錄")
         cursorObj.execute('UPDATE members SET msex = ?, mphone = ? WHERE mname = ?', (input_set_logSex, input_set_logPhone, input_set_logName))
-        print("\n修改後資料: ")
-        print(f'姓名:{input_set_logName}，性別:{input_set_logSex}，電話:{input_set_logPhone}')
         cursorObj.connection.commit()
-        cursorObj.close()
+        
+        # 查询更改后的记录
+        updated_record = cursorObj.execute('SELECT * FROM members WHERE mname = ?', (input_set_logName,)).fetchone()
+        
+        # 顯示修改後的資料
+        print("\n修改後資料: ")
+        print(f'姓名:{updated_record[0]}，性別:{updated_record[1]}，電話:{updated_record[2]}')
+        print(f'=>異動 1 筆記錄')
         
     else:
         print("=>未找到指定姓名的記錄")
 
     cursorObj.close()  # 在這裡關閉連接
-            
+
 def found_recode() -> None:
     """
     查找資料庫中的記錄。
@@ -235,24 +240,31 @@ def found_recode() -> None:
     返回:
     None
     """
-    create_SQL_database()  
+    cursorObj = create_SQL_database()  
     result = result_all()
     input_set_logPhone = input("請輸入想修改記錄的手機: ")
-    found_record = None
+    found_records = []
+
     for item in result:
         if input_set_logPhone == item[2]:
-            found_record = item
-            break
+            found_records.append(item)
 
-    if found_record:
-        # 顯示更改前的資料
+    if found_records:
+        # 顯示找到的记录
         print("""
 姓名       性別  手機
 -----------------------------
-    """)
-        print(f'{add_spaces_name(item[0])}{add_spaces_sex(item[1])}{(item[2])}')
+        """)
+        for found_record in found_records:
+            print(f'{add_spaces_name(found_record[0])}{add_spaces_sex(found_record[1])}{(found_record[2])}')
+        
+        print(f'=>異動 {len(found_records)} 筆記錄')
+        
     else:
         print("查無此電話!請重新輸入")
+
+    cursorObj.close()
+
         
 def delete_database() -> None:
     """
@@ -323,7 +335,6 @@ def switch(choice: str) -> None:
         add_data_to_database(name,sex,phone)
         print("=>異動 1 筆紀錄")
         
-
     elif choice == "5":
         modify_record()
 
@@ -334,7 +345,5 @@ def switch(choice: str) -> None:
     elif choice == "7":
         delete_database()
         
-
     else:
         print("=>無效的選擇")
-        
